@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hc3N1a2thMSIsImlkIjoiNjJkNmZkZjljZjE2Y2QwOGY1NDY3ZjdiIiwiaWF0IjoxNjU4MjU2OTMxLCJleHAiOjE2NTgyNjA1MzF9.vip3ojElQ7D38LmKFHBgQMpv6J0nfmeWmqJf-mz6JKc
+{
+    "title": "nyt on blogssssssssssskliiie",
+    "author": "jaakkojoku",
+    "url": "jotaintanne",
+    "likes": 4
+}
