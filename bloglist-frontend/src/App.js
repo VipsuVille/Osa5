@@ -7,23 +7,21 @@ import LoginForm from './components/loginForm'
 import BlogForm from './components/blogForm'
 
 const App = () => {
-  const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null)
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
-  
+
 
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
-   useEffect(() => {
+  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -42,8 +40,8 @@ const App = () => {
 
       window.localStorage.setItem(
         'loggedNoteappUser', JSON.stringify(user)
-      ) 
- 
+      )
+
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -57,7 +55,7 @@ const App = () => {
   }
 
   const addNote = (blogObject) => {
- 
+
     noteFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
@@ -73,21 +71,37 @@ const App = () => {
   }
   const newLikeUpdate = (blog) => {
     const find = blogs.find(theOne => theOne.id === blog.id)
-    const newBlog = { ...find, likes: find.likes +1}
-       
+    const newBlog = { ...find, likes: find.likes +1 }
     blogService
-      .update(blog.id, newBlog) 
-    /*  .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-      })*/ 
-    }
+      .update(blog.id, newBlog)
+      .then(() => {
+        const blogi = [...blogs]
+        const update = blogi.find(element => element.id === blog.id)
+        blogi[blogi.indexOf(update)].likes += 1
+        setBlogs(blogi.sort(function (a,b) {
+          return a.likes < b.likes
+        }))
+      })
+  }
+  const DeleteBlog = (blog) => {
+    if (window.confirm ('really wanna delete')) {
+      const find = blogs.find(theOne => theOne.id === blog.id)
+      console.log(1)
+      blogService
+        .letsRemove(blog.id)
+        .then(() => {
+          setBlogs(blogs.sort(function (a, b) {
+            return a.likes - b.likes
+          }).filter(p => p.id !== find.id))
 
-  
+        })
+    }
+  }
+
   const Notification = ({ message }) => {
     if (message === null) {
       return null
     }
-  
     return (
       <div className="error">
         {message}
@@ -96,7 +110,7 @@ const App = () => {
   }
   const noteFormRef = useRef()
 
-  const removeUser = (event) => {
+  const removeUser = () => {
     window.localStorage.clear()
   }
 
@@ -115,27 +129,27 @@ const App = () => {
             handleSubmit={handleLogin}
           />
         </Togglable> :
-        
+
         <div>
-          
-           <h2>blogs</h2>
-            <p>{user.name} logged in <button onClick={removeUser}>Logg out</button></p>
-            <Togglable buttonLabel="new Blog" ref={noteFormRef}>
+          <h2>blogs</h2>
+          <p>{user.name} logged in <button onClick={removeUser}>Logg out</button></p>
+          <Togglable buttonLabel="new Blog" ref={noteFormRef}>
             <BlogForm createBlog={addNote} />
           </Togglable>
           <p>BLOGS:</p>
-         
-          <div>{blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} update={newLikeUpdate(blog)}/>
-      )}</div>
-         
+
+          <div>{blogs.sort(function (a, b) {
+            return a.likes - b.likes
+          }).map(blog =>
+            <Blog key={blog.id} blog={blog} update={() => newLikeUpdate(blog)} joukko = {user.username === blog.user.username && <button onClick={() => DeleteBlog(blog)}>Delete</button>}/>
+
+          )}</div>
+
         </div>
       }
     </div>
   )
-        }
-     
-      
-        
+}
+
 
 export default App
