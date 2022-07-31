@@ -20,16 +20,16 @@ const Blog = ({ blog, update, joukko }) => {
 
 
   return (
-    <div style = {blogStyle} >
+    <div style = {blogStyle} className = "Allblogs">
       <div style={hideWhenVisible} className='blog'>
-        {blog.title} {blog.author} {<button onClick={toggleVisibility}>info</button>}
+        {blog.title} {blog.author} {<button id="info" onClick={toggleVisibility}>info</button>}
       </div>
       <div style={showWhenVisible} className='blog2'>
         {blog.title} {<button onClick={toggleVisibility}>info hide</button>}<br/>
         {blog.author}<br/>
         {blog.url}<br/>
-        {blog.likes}{<button onClick={update}>LIKEME!</button>}<br/>
-        {joukko}
+        <span id="testilike"> {blog.likes}{<button onClick={update}>LIKEME!</button>}</span><br/>
+        <span id="delete">{joukko}</span>
       </div>
     </div>
   )}

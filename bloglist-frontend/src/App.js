@@ -60,7 +60,10 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
+        console.log('response: ', returnedBlog )
+        console.log('...response: ', { ...returnedBlog  })
+        console.log('...response, user: ', { ...returnedBlog , user })
+        setBlogs(blogs.concat({ ...returnedBlog , user }))
         setErrorMessage(
           `Blog '${blogObject.title}' has been added`
         )
@@ -68,6 +71,7 @@ const App = () => {
           setErrorMessage(null)
         }, 5000)
       })
+    console.log(blogs)
   }
   const newLikeUpdate = (blog) => {
     const find = blogs.find(theOne => theOne.id === blog.id)
@@ -79,7 +83,7 @@ const App = () => {
         const update = blogi.find(element => element.id === blog.id)
         blogi[blogi.indexOf(update)].likes += 1
         setBlogs(blogi.sort(function (a,b) {
-          return a.likes < b.likes
+          return b.likes < a.likes
         }))
       })
   }
@@ -139,7 +143,7 @@ const App = () => {
           <p>BLOGS:</p>
 
           <div>{blogs.sort(function (a, b) {
-            return a.likes - b.likes
+            return b.likes - a.likes
           }).map(blog =>
             <Blog key={blog.id} blog={blog} update={() => newLikeUpdate(blog)} joukko = {user.username === blog.user.username && <button onClick={() => DeleteBlog(blog)}>Delete</button>}/>
 
